@@ -31,7 +31,6 @@ public class EditorCameraSettings : EditorWindow
     }
 }
 
-
 [InitializeOnLoad]
 public static class SceneViewSmoothCamera
 {
@@ -91,21 +90,15 @@ public static class SceneViewSmoothCamera
 
             var eventCurrent = Event.current;
 
-
-            //Vector3.Lerp(view.pivot, view.camera.transform.TransformPoint(pivotLocalPos), deltaTime * 10f);
-
-
             if (Event.current.button == 1)
             {
                 if (eventCurrent.type == EventType.MouseDown)
                 {
                     rightMouseDown = true;
-                    //Debug.Log("true");
                 }
                 else if (eventCurrent.type == EventType.MouseUp)
                 {
                     rightMouseDown = false;
-                    //Debug.Log("false");
                 }
             }
 
@@ -194,7 +187,9 @@ public static class SceneViewSmoothCamera
                 if (eventCurrent.type == EventType.ScrollWheel)
                 {
                     targetSpeed = Mathf.Clamp(targetSpeed * (1f-eventCurrent.delta.y*0.05f), 0f, maxSpeed);
+
                     //Debug.Log("targetSpeed " + targetSpeed);
+
                     eventCurrent.Use();
                 }
 
@@ -240,6 +235,8 @@ public static class SceneViewSmoothCamera
             }
             else
             {
+                moveDirection = Vector3.zero;
+
                 currentSpeed = 0f;
             }
         };

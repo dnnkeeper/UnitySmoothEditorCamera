@@ -23,11 +23,11 @@ public class EditorCameraSettings : EditorWindow
         maxSpeed = EditorGUILayout.FloatField("MaxSpeed", maxSpeed);
         accelerationRate = EditorGUILayout.FloatField("accelerationRate", accelerationRate);
         decelerationRate = EditorGUILayout.FloatField("decelerationRate", decelerationRate);
-        SceneViewSmoothCamera.targetSpeed = EditorGUILayout.Slider("targetSpeed", SceneViewSmoothCamera.targetSpeed, 0f, maxSpeed);
+        SceneViewSmoothCamera.TargetSpeed = EditorGUILayout.Slider("targetSpeed", SceneViewSmoothCamera.TargetSpeed, 0f, maxSpeed);
 
-        SceneViewSmoothCamera.maxSpeed = maxSpeed;
-        SceneViewSmoothCamera.accelerationRate = accelerationRate;
-        SceneViewSmoothCamera.decelerationRate = decelerationRate;
+        SceneViewSmoothCamera.MaxSpeed = maxSpeed;
+        SceneViewSmoothCamera.AccelerationRate = accelerationRate;
+        SceneViewSmoothCamera.DecelerationRate = decelerationRate;
     }
 }
 
@@ -53,13 +53,13 @@ public static class SceneViewSmoothCamera
         }
     }
 
-    public static float maxSpeed = 100f;
+    private static float maxSpeed = 100f;
 
-    public static float accelerationRate = 10f;
+    private static float accelerationRate = 10f;
 
-    public static float decelerationRate = 10f;
+    private static float decelerationRate = 10f;
 
-    public static float targetSpeed = 1f;
+    private static float targetSpeed = 1f;
 
     public static float currentSpeed;
 
@@ -71,6 +71,62 @@ public static class SceneViewSmoothCamera
 
     static bool w, s, a, d, q, e;
 
+    public static float MaxSpeed
+    {
+        get
+        {
+            return maxSpeed;
+        }
+
+        set
+        {
+            maxSpeed = value;
+            EditorPrefs.SetFloat("maxCameraSpeed", maxSpeed);
+        }
+    }
+
+    public static float AccelerationRate
+    {
+        get
+        {
+            return accelerationRate;
+        }
+
+        set
+        {
+            accelerationRate = value;
+            EditorPrefs.SetFloat("accelerationRate", accelerationRate);
+        }
+    }
+
+    public static float DecelerationRate
+    {
+        get
+        {
+            return decelerationRate;
+        }
+
+        set
+        {
+            decelerationRate = value;
+            EditorPrefs.SetFloat("decelerationRate", decelerationRate);
+        }
+    }
+
+    public static float TargetSpeed
+    {
+        get
+        {
+            return targetSpeed;
+        }
+
+        set
+        {
+            targetSpeed = value;
+            EditorPrefs.SetFloat("targetCameraSpeed", targetSpeed);
+        }
+    }
+
     static SceneViewSmoothCamera()
     {
         s_TimeHelper.Begin();
@@ -80,8 +136,17 @@ public static class SceneViewSmoothCamera
         SceneView.onSceneGUIDelegate += view =>
         {
             if (!inited) {
+
                 inited = true;
-                
+
+                if (EditorPrefs.HasKey("maxCameraSpeed"))
+                    MaxSpeed = EditorPrefs.GetFloat("maxCameraSpeed");
+                if (EditorPrefs.HasKey("targetCameraSpeed"))
+                    TargetSpeed = EditorPrefs.GetFloat("targetCameraSpeed");
+                if (EditorPrefs.HasKey("accelerationRate"))
+                    AccelerationRate = EditorPrefs.GetFloat("accelerationRate");
+                if (EditorPrefs.HasKey("decelerationRate"))
+                    DecelerationRate = EditorPrefs.GetFloat("decelerationRate");
             }
             pivotLocalPos = view.camera.transform.InverseTransformPoint(view.pivot);
             s_TimeHelper.Update();
@@ -186,7 +251,7 @@ public static class SceneViewSmoothCamera
 
                 if (eventCurrent.type == EventType.ScrollWheel)
                 {
-                    targetSpeed = Mathf.Clamp(targetSpeed * (1f-eventCurrent.delta.y*0.05f), 0f, maxSpeed);
+                    TargetSpeed = Mathf.Clamp(TargetSpeed * (1f-eventCurrent.delta.y*0.05f), 0f, MaxSpeed);
 
                     //Debug.Log("targetSpeed " + targetSpeed);
 
@@ -195,7 +260,7 @@ public static class SceneViewSmoothCamera
 
                 if (w || a || s || d || q || e)
                 {
-                    currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, accelerationRate * deltaTime);
+                    currentSpeed = Mathf.Lerp(currentSpeed, TargetSpeed, AccelerationRate * deltaTime);
 
                     moveDirection = Vector3.zero;
 
@@ -226,7 +291,7 @@ public static class SceneViewSmoothCamera
                 }
                 else
                 {
-                    currentSpeed = Mathf.Lerp(currentSpeed, 0f, decelerationRate * deltaTime);
+                    currentSpeed = Mathf.Lerp(currentSpeed, 0f, DecelerationRate * deltaTime);
                 }
 
                 pivotLocalPos += moveDirection * deltaTime * currentSpeed;

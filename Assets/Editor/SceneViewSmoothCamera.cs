@@ -20,6 +20,10 @@ public class EditorCameraSettings : EditorWindow
 
     void OnGUI()
     {
+        SceneViewSmoothCamera.enabled = EditorGUILayout.Toggle("Enabled", SceneViewSmoothCamera.enabled);
+
+        EditorPrefs.SetBool("smoothCamera", SceneViewSmoothCamera.enabled);
+
         maxSpeed = EditorGUILayout.FloatField("MaxSpeed", maxSpeed);
         accelerationRate = EditorGUILayout.FloatField("accelerationRate", accelerationRate);
         decelerationRate = EditorGUILayout.FloatField("decelerationRate", decelerationRate);
@@ -52,6 +56,8 @@ public static class SceneViewSmoothCamera
             return deltaTime;
         }
     }
+
+    public static bool enabled = true;
 
     private static float maxSpeed = 100f;
 
@@ -135,10 +141,15 @@ public static class SceneViewSmoothCamera
 
         SceneView.onSceneGUIDelegate += view =>
         {
+            if (!enabled)
+                return;
+
             if (!inited) {
 
                 inited = true;
 
+                if (EditorPrefs.HasKey("smoothCamera"))
+                    enabled = EditorPrefs.GetBool("smoothCamera");
                 if (EditorPrefs.HasKey("maxCameraSpeed"))
                     MaxSpeed = EditorPrefs.GetFloat("maxCameraSpeed");
                 if (EditorPrefs.HasKey("targetCameraSpeed"))

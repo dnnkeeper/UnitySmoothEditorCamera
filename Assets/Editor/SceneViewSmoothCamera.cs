@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+
 public class EditorCameraSettings : EditorWindow
 {
     public float maxSpeed = 100f;
@@ -16,6 +17,11 @@ public class EditorCameraSettings : EditorWindow
         // Get existing open window or if none, make a new one:
         EditorCameraSettings window = (EditorCameraSettings)EditorWindow.GetWindow(typeof(EditorCameraSettings));
         window.Show();
+    }
+
+    public void OnInspectorUpdate()
+    {
+        Repaint();
     }
 
     void OnGUI()
@@ -262,7 +268,7 @@ public static class SceneViewSmoothCamera
 
                 if (eventCurrent.type == EventType.ScrollWheel)
                 {
-                    TargetSpeed = Mathf.Clamp(TargetSpeed * (1f-eventCurrent.delta.y*0.05f), 0f, MaxSpeed);
+                    TargetSpeed = Mathf.Clamp(TargetSpeed * (1f-eventCurrent.delta.y*0.025f), 0f, MaxSpeed);
 
                     //Debug.Log("targetSpeed " + targetSpeed);
 

@@ -176,6 +176,10 @@ public static class SceneViewSmoothCamera
             {
                 if (eventCurrent.type == EventType.MouseDown)
                 {
+                    moveDirection = Vector3.zero;
+
+                    w = s = a = d = q = e = false;
+
                     rightMouseDown = true;
                 }
                 else if (eventCurrent.type == EventType.MouseUp)
@@ -268,7 +272,7 @@ public static class SceneViewSmoothCamera
 
                 if (eventCurrent.type == EventType.ScrollWheel)
                 {
-                    TargetSpeed = Mathf.Clamp(TargetSpeed * (1f-eventCurrent.delta.y*0.025f), 0f, MaxSpeed);
+                    TargetSpeed = Mathf.Clamp(TargetSpeed * (1f-eventCurrent.delta.y*0.05f), 0f, MaxSpeed);
 
                     //Debug.Log("targetSpeed " + targetSpeed);
 

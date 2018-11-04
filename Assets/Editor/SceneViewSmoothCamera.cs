@@ -150,6 +150,12 @@ public static class SceneViewSmoothCamera
             if (!enabled)
                 return;
 
+            if (!Application.isFocused || EditorWindow.focusedWindow != view)
+            {
+                Reset();
+                return;
+            }
+
             if (!inited) {
 
                 inited = true;
@@ -176,9 +182,7 @@ public static class SceneViewSmoothCamera
             {
                 if (eventCurrent.type == EventType.MouseDown)
                 {
-                    moveDirection = Vector3.zero;
-
-                    w = s = a = d = q = e = false;
+                    Reset();
 
                     rightMouseDown = true;
                 }
@@ -326,6 +330,13 @@ public static class SceneViewSmoothCamera
                 currentSpeed = 0f;
             }
         };
+    }
+
+    static void Reset()
+    {
+        moveDirection = Vector3.zero;
+
+        w = s = a = d = q = e = false;
     }
 }
 

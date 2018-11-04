@@ -138,6 +138,8 @@ public static class SceneViewSmoothCamera
         }
     }
 
+    static float speedMod = 1f;
+
     static SceneViewSmoothCamera()
     {
         s_TimeHelper.Begin();
@@ -272,6 +274,12 @@ public static class SceneViewSmoothCamera
                     }
                 }
 
+                if (eventCurrent.shift)
+                {
+                    speedMod = 5f;
+                }
+                else
+                    speedMod = 1f;
 
                 if (eventCurrent.type == EventType.ScrollWheel)
                 {
@@ -284,7 +292,7 @@ public static class SceneViewSmoothCamera
 
                 if (w || a || s || d || q || e)
                 {
-                    currentSpeed = Mathf.Lerp(currentSpeed, TargetSpeed, AccelerationRate * deltaTime);
+                    currentSpeed = Mathf.Lerp(currentSpeed, TargetSpeed * speedMod, AccelerationRate * deltaTime);
 
                     moveDirection = Vector3.zero;
 
@@ -338,6 +346,8 @@ public static class SceneViewSmoothCamera
         moveDirection = Vector3.zero;
 
         w = s = a = d = q = e = false;
+
+        speedMod = 1f;
     }
 }
 

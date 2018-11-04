@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEditor;
 using UnityEngine;
 
@@ -144,13 +143,13 @@ public static class SceneViewSmoothCamera
         s_TimeHelper.Begin();
 
         Debug.Log("SceneViewSmoothCamera created");
-
+        
         SceneView.onSceneGUIDelegate += view =>
         {
             if (!enabled)
                 return;
 
-            if (!Application.isFocused || EditorWindow.focusedWindow != view)
+            if ( EditorWindow.focusedWindow != view || EditorWindow.mouseOverWindow == null)
             {
                 Reset();
                 return;
@@ -334,6 +333,8 @@ public static class SceneViewSmoothCamera
 
     static void Reset()
     {
+        rightMouseDown = false;
+
         moveDirection = Vector3.zero;
 
         w = s = a = d = q = e = false;

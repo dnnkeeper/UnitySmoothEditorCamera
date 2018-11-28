@@ -16,6 +16,10 @@ public class EditorCameraSettings : EditorWindow
         // Get existing open window or if none, make a new one:
         EditorCameraSettings window = (EditorCameraSettings)EditorWindow.GetWindow(typeof(EditorCameraSettings));
         window.Show();
+        SceneViewSmoothCamera.Init();
+        window.maxSpeed = SceneViewSmoothCamera.MaxSpeed;
+        window.accelerationRate = SceneViewSmoothCamera.AccelerationRate;
+        window.decelerationRate = SceneViewSmoothCamera.DecelerationRate;
     }
 
     public void OnInspectorUpdate()
@@ -140,6 +144,24 @@ public static class SceneViewSmoothCamera
 
     static float speedMod = 1f;
 
+    public static void Init()
+    {
+        Debug.Log("Smooth camera init");
+
+        inited = true;
+
+        if (EditorPrefs.HasKey("smoothCamera"))
+            enabled = EditorPrefs.GetBool("smoothCamera");
+        if (EditorPrefs.HasKey("maxCameraSpeed"))
+            MaxSpeed = EditorPrefs.GetFloat("maxCameraSpeed");
+        if (EditorPrefs.HasKey("targetCameraSpeed"))
+            TargetSpeed = EditorPrefs.GetFloat("targetCameraSpeed");
+        if (EditorPrefs.HasKey("accelerationRate"))
+            AccelerationRate = EditorPrefs.GetFloat("accelerationRate");
+        if (EditorPrefs.HasKey("decelerationRate"))
+            DecelerationRate = EditorPrefs.GetFloat("decelerationRate");
+    }
+
     static SceneViewSmoothCamera()
     {
         s_TimeHelper.Begin();
@@ -158,19 +180,7 @@ public static class SceneViewSmoothCamera
             }
 
             if (!inited) {
-
-                inited = true;
-
-                if (EditorPrefs.HasKey("smoothCamera"))
-                    enabled = EditorPrefs.GetBool("smoothCamera");
-                if (EditorPrefs.HasKey("maxCameraSpeed"))
-                    MaxSpeed = EditorPrefs.GetFloat("maxCameraSpeed");
-                if (EditorPrefs.HasKey("targetCameraSpeed"))
-                    TargetSpeed = EditorPrefs.GetFloat("targetCameraSpeed");
-                if (EditorPrefs.HasKey("accelerationRate"))
-                    AccelerationRate = EditorPrefs.GetFloat("accelerationRate");
-                if (EditorPrefs.HasKey("decelerationRate"))
-                    DecelerationRate = EditorPrefs.GetFloat("decelerationRate");
+                Init();
             }
             pivotLocalPos = view.camera.transform.InverseTransformPoint(view.pivot);
             s_TimeHelper.Update();
